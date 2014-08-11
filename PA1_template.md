@@ -5,7 +5,7 @@
 
 ```r
 library(ggplot2)
-knitr::opts_chunk$set(echo = TRUE, cache = TRUE)
+knitr::opts_chunk$set(echo = TRUE, cache = FALSE)
 ```
 
 ## Loading and preprocessing the data
@@ -34,10 +34,8 @@ str(data.act)
 ```
 
 ```r
-plot(dates, data.act$steps)
+#plot(dates, data.act$steps)
 ```
-
-![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-3.png) 
 
 
 ## What is mean total number of steps taken per day?
@@ -69,7 +67,7 @@ summary(steps.sum)
 
 ```r
 steps.perday <- data.frame(date = names(steps.sum), steps = steps.sum)
-hist(steps.perday$steps, breaks = 20)
+hist(steps.perday$steps, breaks = 20, main = "total number of steps taken each day", xlab = "number of steps", ylab = "frequency")
 ```
 
 ![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5.png) 
@@ -77,6 +75,7 @@ hist(steps.perday$steps, breaks = 20)
 
 2. Calculate and report the mean and median total number of steps taken per day
 
+--> Mean of total number of steps taken per day:
 
 ```r
 mean(steps.perday$steps)
@@ -85,6 +84,8 @@ mean(steps.perday$steps)
 ```
 ## [1] 9354
 ```
+
+--> Median of total number of steps taken per day:
 
 ```r
 median(steps.perday$steps)
@@ -115,13 +116,14 @@ steps.perint <- data.frame(interval = as.numeric(names(interval.mean)), steps = 
 
 
 ```r
-qplot(interval, steps, data = steps.perint, geom = "line")
+qplot(interval, steps, data = steps.perint, geom = "line", main = "average daily activity pattern", xlab = "5-min interval", ylab = "average steps, across all days")
 ```
 
-![plot of chunk unnamed-chunk-8](figure/unnamed-chunk-8.png) 
+![plot of chunk unnamed-chunk-9](figure/unnamed-chunk-9.png) 
 
 2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 
+--> The 5-min interval which contains, on the average, the maximum number of steps:
 
 ```r
 max <- max(steps.perint$steps)
@@ -137,6 +139,7 @@ steps.perint[which(steps.perint$steps == max),]
 
 1. Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)
 
+--> The number of missing values for the steps in the dataset is:
 
 ```r
 sum(is.na(data.act$steps))
@@ -152,6 +155,7 @@ sum(is.na(data.act$steps))
 
 3. Create a new dataset that is equal to the original dataset but with the missing data filled in.
 
+--> Here's the code that substitutes the mean steps across all days for missing steps per interval:
 
 ```r
 act.cleaned <- data.act
@@ -191,16 +195,20 @@ tail(act.cleaned)
 4. Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day.
 
 
+
 ```r
 steps.sumcleaned <- with(act.cleaned, tapply(steps, date, sum, na.rm = T))
 steps.perdaycleaned <- data.frame(date = names(steps.sumcleaned), steps = steps.sumcleaned)
 
-par(mfrow = c(1, 2))
-hist(steps.perday$steps, breaks = 20)
-hist(steps.perdaycleaned$steps, breaks = 20)
+par(mfrow = c(2, 1))
+hist(steps.perday$steps, breaks = 20, main = "total number of steps taken each day, with missing values", xlab = "number of steps", ylab = "frequency")
+hist(steps.perdaycleaned$steps, breaks = 20, main = "total number of steps taken each day, cleaned data", xlab = "number of steps", ylab = "frequency")
 ```
 
-![plot of chunk unnamed-chunk-12](figure/unnamed-chunk-12.png) 
+![plot of chunk unnamed-chunk-13](figure/unnamed-chunk-13.png) 
+
+
+--> The means and medians of the dataset with missing values compared to the cleaned dataset:
 
 ```r
 c(mean(steps.perday$steps),median(steps.perday$steps))
@@ -249,6 +257,7 @@ summary(steps.perdaycleaned$steps)
 
 1. Create a new factor variable in the dataset with two levels – “weekday” and “weekend” indicating whether a given date is a weekday or weekend day.
 
+--> The daytype factor will contain whether the data was on a "weekday" or a "weekend"
 
 ```r
 dayofweek <- weekdays(dates)
@@ -277,17 +286,9 @@ interval.mean.end <- with(data.weekend, tapply(steps, interval, mean))
 steps.perint.end <- data.frame(interval = as.numeric(names(interval.mean.end)), steps = interval.mean.end)
 
 require(gridExtra)
-```
-
-```
-## Loading required package: gridExtra
-## Loading required package: grid
-```
-
-```r
-plotday <- qplot(interval, steps, data = steps.perint.day, geom = "line")
-plotend <- qplot(interval, steps, data = steps.perint.end, geom = "line")
+plotday <- qplot(interval, steps, data = steps.perint.day, geom = "line", main = "weekdays", xlab = "5-min interval", ylab = "ave num of steps")
+plotend <- qplot(interval, steps, data = steps.perint.end, geom = "line", main = "weekends", xlab = "5-min interval", ylab = "ave num of steps")
 grid.arrange(plotday, plotend, nrow=2)
 ```
 
-![plot of chunk unnamed-chunk-15](figure/unnamed-chunk-15.png) 
+![plot of chunk unnamed-chunk-17](figure/unnamed-chunk-17.png) 
