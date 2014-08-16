@@ -5,6 +5,13 @@
 
 ```r
 library(ggplot2)
+```
+
+```
+## Use suppressPackageStartupMessages to eliminate package startup messages.
+```
+
+```r
 knitr::opts_chunk$set(echo = TRUE, cache = FALSE)
 ```
 
@@ -40,6 +47,7 @@ str(data.act)
 
 ## What is mean total number of steps taken per day?
 
+To get the mean total number of steps taken per day, we get the total number of steps taken per day
 
 ```r
 steps.sum <- with(data.act, tapply(steps, dates, sum, na.rm = T))
@@ -64,6 +72,7 @@ summary(steps.sum)
 
 1. Make a histogram of the total number of steps taken each day
 
+Here is a histogram of the total number of steps taken per day
 
 ```r
 steps.perday <- data.frame(date = names(steps.sum), steps = steps.sum)
@@ -75,7 +84,7 @@ hist(steps.perday$steps, breaks = 20, main = "total number of steps taken each d
 
 2. Calculate and report the mean and median total number of steps taken per day
 
---> Mean of total number of steps taken per day:
+--> The mean of total number of steps taken per day is:
 
 ```r
 mean(steps.perday$steps)
@@ -85,7 +94,7 @@ mean(steps.perday$steps)
 ## [1] 9354
 ```
 
---> Median of total number of steps taken per day:
+--> The median of total number of steps taken per day:
 
 ```r
 median(steps.perday$steps)
@@ -97,6 +106,7 @@ median(steps.perday$steps)
 
 ## What is the average daily activity pattern?
 
+To get the average daily activity pattern, let's examine the mean steps per 5-min interval in a day across all all days --
 
 ```r
 interval.mean <- with(data.act, tapply(steps, interval, mean, na.rm = T))
@@ -114,6 +124,7 @@ steps.perint <- data.frame(interval = as.numeric(names(interval.mean)), steps = 
 
 1. Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
 
+Here's a time series plot of that average per 5-min interval - 
 
 ```r
 qplot(interval, steps, data = steps.perint, geom = "line", main = "average daily activity pattern", xlab = "5-min interval", ylab = "average steps, across all days")
@@ -151,7 +162,7 @@ sum(is.na(data.act$steps))
 
 2. Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.
 
---> I will use the mean across all days for that interval. 
+--> I propose that we use the mean across all days for that interval as the value to substitute the missing values in the dataset. 
 
 3. Create a new dataset that is equal to the original dataset but with the missing data filled in.
 
@@ -194,7 +205,7 @@ tail(act.cleaned)
 
 4. Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day.
 
-
+With the missing values substituted as proposed, here's the histrogram again of the total number of steps taken each day
 
 ```r
 steps.sumcleaned <- with(act.cleaned, tapply(steps, date, sum, na.rm = T))
@@ -208,7 +219,7 @@ hist(steps.perdaycleaned$steps, breaks = 20, main = "total number of steps taken
 ![plot of chunk unnamed-chunk-13](figure/unnamed-chunk-13.png) 
 
 
---> The means and medians of the dataset with missing values compared to the cleaned dataset:
+--> The means and medians of the dataset with missing values compared to the cleaned dataset are:
 
 ```r
 c(mean(steps.perday$steps),median(steps.perday$steps))
@@ -257,7 +268,7 @@ summary(steps.perdaycleaned$steps)
 
 1. Create a new factor variable in the dataset with two levels – “weekday” and “weekend” indicating whether a given date is a weekday or weekend day.
 
---> The daytype factor will contain whether the data was on a "weekday" or a "weekend"
+--> Let's create daytype as the factor that will contain whether the data was on a "weekday" or a "weekend"
 
 ```r
 dayofweek <- weekdays(dates)
@@ -274,6 +285,7 @@ head(daytype)
 
 2. Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). The plot should look something like the following, which was creating using simulated data. Your plot will look different from the one above because you will be using the activity monitor data. Note that the above plot was made using the lattice system but you can make the same version of the plot using any plotting system you choose.
 
+Here's the panel plot -
 
 ```r
 data.weekday <- subset (act.cleaned, daytype == "weekday")
@@ -286,6 +298,14 @@ interval.mean.end <- with(data.weekend, tapply(steps, interval, mean))
 steps.perint.end <- data.frame(interval = as.numeric(names(interval.mean.end)), steps = interval.mean.end)
 
 require(gridExtra)
+```
+
+```
+## Loading required package: gridExtra
+## Loading required package: grid
+```
+
+```r
 plotday <- qplot(interval, steps, data = steps.perint.day, geom = "line", main = "weekdays", xlab = "5-min interval", ylab = "ave num of steps")
 plotend <- qplot(interval, steps, data = steps.perint.end, geom = "line", main = "weekends", xlab = "5-min interval", ylab = "ave num of steps")
 grid.arrange(plotday, plotend, nrow=2)
